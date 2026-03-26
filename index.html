@@ -3,212 +3,264 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Duy Anh Bui - Frontend Developer</title>
+    <title>Duy Anh Bui | Frontend Developer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600&family=Syne:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              acid: "#CCFF00",
+              dark: "#050505",
+              subtle: "#222222",
+              "gray-text": "#999999",
+            },
+            fontFamily: {
+              sans: ["Space Grotesk", "sans-serif"],
+              display: ["Syne", "sans-serif"],
+            },
+          },
+        },
+      };
+    </script>
     <style>
-      :root {
-        --bg: #0b1020;
-        --card: #131a2e;
-        --text: #f3f5ff;
-        --muted: #b7c0e0;
-        --accent: #7aa2ff;
-        --chip: #1c2645;
-      }
-
-      * {
-        box-sizing: border-box;
-      }
-
       body {
-        margin: 0;
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
-          Ubuntu, Cantarell, "Helvetica Neue", Arial, sans-serif;
-        background: linear-gradient(180deg, #090d1a 0%, #0b1020 100%);
-        color: var(--text);
-        line-height: 1.6;
+        background-color: #050505;
+        color: #ffffff;
+        overflow-x: hidden;
       }
-
-      .container {
-        width: min(960px, 92%);
-        margin: 0 auto;
-        padding: 40px 0 64px;
+      ::selection {
+        background-color: #ccff00;
+        color: #000;
       }
-
-      .card {
-        background: var(--card);
-        border: 1px solid #253054;
-        border-radius: 16px;
-        padding: 28px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.28);
+      ::-webkit-scrollbar {
+        width: 5px;
       }
-
-      h1,
-      h2,
-      h3 {
-        margin-top: 0;
-        line-height: 1.3;
+      ::-webkit-scrollbar-track {
+        background: #050505;
       }
-
-      h1 {
-        font-size: clamp(1.75rem, 4vw, 2.4rem);
-        margin-bottom: 10px;
+      ::-webkit-scrollbar-thumb {
+        background: #333;
       }
-
-      h2 {
-        margin-top: 30px;
-        margin-bottom: 12px;
-        color: #d7dfff;
+      ::-webkit-scrollbar-thumb:hover {
+        background: #ccff00;
       }
-
-      p {
-        color: var(--muted);
-        margin-top: 0;
+      .reveal-up {
+        opacity: 0;
+        transform: translateY(40px);
+        transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
       }
-
-      .chips {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-      }
-
-      .chip {
-        background: var(--chip);
-        border: 1px solid #2f3d6d;
-        color: #dbe3ff;
-        padding: 6px 10px;
-        border-radius: 999px;
-        font-size: 0.9rem;
-      }
-
-      .section {
-        margin-top: 22px;
-      }
-
-      .job,
-      .project {
-        margin-bottom: 16px;
-      }
-
-      .meta {
-        color: #9eb0e8;
-        font-size: 0.95rem;
-        margin: 0 0 4px;
-      }
-
-      a {
-        color: var(--accent);
-        text-decoration: none;
-      }
-
-      a:hover {
-        text-decoration: underline;
+      .reveal-up.in-view {
+        opacity: 1;
+        transform: translateY(0);
       }
     </style>
   </head>
-  <body>
-    <main class="container">
-      <section class="card">
-        <h1>Hi, I'm Duy Anh Bui 👋</h1>
-        <p>
+  <body class="antialiased">
+    <nav
+      class="fixed top-0 z-50 w-full border-b border-subtle/60 bg-dark/80 px-6 py-4 backdrop-blur md:px-12"
+    >
+      <div class="mx-auto flex max-w-6xl items-center justify-between">
+        <a href="#" class="font-display text-xl font-bold tracking-tight text-white"
+          >DUY.ANH</a
+        >
+        <div
+          class="hidden items-center gap-8 text-xs font-medium uppercase tracking-[0.25em] text-white md:flex"
+        >
+          <a href="#about" class="transition-colors hover:text-acid">About</a>
+          <a href="#stack" class="transition-colors hover:text-acid">Stack</a>
+          <a href="#experience" class="transition-colors hover:text-acid">Experience</a>
+          <a href="#projects" class="transition-colors hover:text-acid">Projects</a>
+          <a href="#contact" class="transition-colors hover:text-acid">Contact</a>
+        </div>
+      </div>
+    </nav>
+
+    <section
+      class="relative flex min-h-screen flex-col justify-center border-b border-subtle px-6 pt-32 md:px-12"
+    >
+      <div
+        class="pointer-events-none absolute right-[10%] top-1/4 h-[30vw] w-[30vw] rounded-full bg-acid opacity-10 blur-[140px]"
+      ></div>
+      <div class="mx-auto w-full max-w-6xl">
+        <p class="reveal-up mb-4 flex items-center gap-2 font-mono text-xs tracking-widest text-acid">
+          <span class="h-2 w-2 animate-pulse rounded-full bg-acid"></span>
+          FRONTEND DEVELOPER
+        </p>
+        <h1
+          class="reveal-up font-display text-[15vw] font-bold uppercase leading-[0.9] tracking-tighter text-white md:text-[11vw]"
+        >
+          Duy Anh<br />
+          <span class="text-gray-text">Bui</span>
+        </h1>
+        <p class="reveal-up mt-8 max-w-3xl text-base leading-relaxed text-gray-text md:text-xl">
           Frontend Developer based in Ho Chi Minh City, Vietnam. I build responsive,
           user-centric web applications and love turning Figma designs into clean,
           maintainable code.
         </p>
+      </div>
+    </section>
 
-        <div class="section">
-          <h2>🛠 Tech Stack</h2>
-
-          <h3>Frontend</h3>
-          <div class="chips">
-            <span class="chip">HTML5</span>
-            <span class="chip">CSS3</span>
-            <span class="chip">SCSS</span>
-            <span class="chip">JavaScript (ES6+)</span>
-            <span class="chip">TypeScript</span>
-            <span class="chip">ReactJS</span>
-            <span class="chip">Angular</span>
-            <span class="chip">Redux Toolkit</span>
-            <span class="chip">MUI</span>
-            <span class="chip">AntD</span>
-            <span class="chip">Bootstrap</span>
-            <span class="chip">Pug</span>
-          </div>
-
-          <h3>Backend &amp; DB</h3>
-          <div class="chips">
-            <span class="chip">NestJS</span>
-            <span class="chip">Java</span>
-            <span class="chip">MySQL</span>
-            <span class="chip">Supabase</span>
-            <span class="chip">PHP / WordPress</span>
-          </div>
-
-          <h3>Tools</h3>
-          <div class="chips">
-            <span class="chip">Git</span>
-            <span class="chip">Docker</span>
-            <span class="chip">Jira</span>
-            <span class="chip">Figma</span>
-            <span class="chip">Postman</span>
-            <span class="chip">Swagger</span>
-            <span class="chip">Chrome Extension API</span>
-          </div>
+    <section id="about" class="border-b border-subtle px-6 py-16 md:px-12 md:py-20">
+      <div class="mx-auto grid max-w-6xl grid-cols-1 gap-10 md:grid-cols-2 md:gap-16">
+        <div class="reveal-up">
+          <h2 class="mb-8 font-mono text-xs uppercase tracking-widest text-acid">
+            About
+          </h2>
+          <p class="font-display text-3xl font-bold leading-tight text-white md:text-5xl">
+            Hi, I'm Duy Anh Bui 👋
+          </p>
         </div>
+        <div class="reveal-up">
+          <p class="text-lg leading-relaxed text-gray-300">
+            I focus on crafting performant interfaces that are both user-friendly and
+            production-ready, from pixel-perfect implementation to maintainable frontend
+            architecture.
+          </p>
+        </div>
+      </div>
+    </section>
 
-        <div class="section">
-          <h2>💼 Experience</h2>
-
-          <article class="job">
-            <h3>Web Engineer @ TechX Vietnam</h3>
-            <p class="meta">Sep 2024 - Present</p>
-            <p>
-              Building SEO-optimized UI components and integrating frontend modules
-              for Japanese-market platforms.
+    <section id="stack" class="border-b border-subtle px-6 py-16 md:px-12 md:py-20">
+      <div class="mx-auto max-w-6xl">
+        <h2 class="mb-10 font-display text-5xl font-bold text-white md:text-7xl">
+          Tech Stack
+        </h2>
+        <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
+          <article class="reveal-up rounded-2xl border border-white/10 bg-subtle/30 p-6">
+            <h3 class="mb-4 font-mono text-xs uppercase tracking-widest text-acid">
+              Frontend
+            </h3>
+            <p class="text-gray-300">
+              HTML5, CSS3, SCSS, JavaScript (ES6+), TypeScript, ReactJS, Angular, Redux
+              Toolkit, MUI, AntD, Bootstrap, Pug
             </p>
           </article>
+          <article class="reveal-up rounded-2xl border border-white/10 bg-subtle/30 p-6">
+            <h3 class="mb-4 font-mono text-xs uppercase tracking-widest text-acid">
+              Backend &amp; DB
+            </h3>
+            <p class="text-gray-300">NestJS, Java, MySQL, Supabase, PHP / WordPress</p>
+          </article>
+          <article class="reveal-up rounded-2xl border border-white/10 bg-subtle/30 p-6">
+            <h3 class="mb-4 font-mono text-xs uppercase tracking-widest text-acid">
+              Tools
+            </h3>
+            <p class="text-gray-300">
+              Git, Docker, Jira, Figma, Postman, Swagger, Chrome Extension API
+            </p>
+          </article>
+        </div>
+      </div>
+    </section>
 
-          <article class="job">
-            <h3>Front-end Developer @ ITBee Solutions</h3>
-            <p class="meta">Jul 2023 - Sep 2024</p>
-            <p>
+    <section id="experience" class="border-b border-subtle px-6 py-16 md:px-12 md:py-20">
+      <div class="mx-auto max-w-6xl">
+        <h2 class="mb-10 font-display text-5xl font-bold text-white md:text-7xl">
+          Experience
+        </h2>
+        <div class="space-y-0">
+          <article class="reveal-up border-t border-subtle py-8">
+            <p class="mb-2 font-mono text-xs uppercase tracking-widest text-acid">
+              Sep 2024 - Present
+            </p>
+            <h3 class="font-display text-3xl font-bold text-white">
+              Web Engineer @ TechX Vietnam
+            </h3>
+            <p class="mt-3 max-w-3xl text-gray-300">
+              Building SEO-optimized UI components and integrating frontend modules for
+              Japanese-market platforms.
+            </p>
+          </article>
+          <article class="reveal-up border-t border-subtle py-8">
+            <p class="mb-2 font-mono text-xs uppercase tracking-widest text-acid">
+              Jul 2023 - Sep 2024
+            </p>
+            <h3 class="font-display text-3xl font-bold text-white">
+              Front-end Developer @ ITBee Solutions
+            </h3>
+            <p class="mt-3 max-w-3xl text-gray-300">
               Delivered 4 projects across React and Angular - restaurant booking,
               internal dashboards, and an environmental platform.
             </p>
           </article>
         </div>
+      </div>
+    </section>
 
-        <div class="section">
-          <h2>🚀 Personal Projects</h2>
-
-          <article class="project">
-            <h3>Desktop Utility App</h3>
-            <p>
+    <section id="projects" class="border-b border-subtle px-6 py-16 md:px-12 md:py-20">
+      <div class="mx-auto max-w-6xl">
+        <h2 class="mb-10 font-display text-5xl font-bold text-white md:text-7xl">
+          Personal Projects
+        </h2>
+        <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+          <article class="reveal-up rounded-2xl border border-white/10 bg-subtle/30 p-6">
+            <p class="mb-2 font-mono text-xs uppercase tracking-widest text-acid">
+              Project 01
+            </p>
+            <h3 class="font-display text-3xl font-bold text-white">Desktop Utility App</h3>
+            <p class="mt-3 text-gray-300">
               A multi-tool productivity suite featuring a CodePen clone, SCSS-to-CSS
-              compiler, JSON formatter, note-taking system (Notion-style), and
-              automated leave request assistant.
+              compiler, JSON formatter, note-taking system (Notion-style), and automated
+              leave request assistant.
             </p>
           </article>
-
-          <article class="project">
-            <h3>Chrome Extension</h3>
-            <p>
+          <article class="reveal-up rounded-2xl border border-white/10 bg-subtle/30 p-6">
+            <p class="mb-2 font-mono text-xs uppercase tracking-widest text-acid">
+              Project 02
+            </p>
+            <h3 class="font-display text-3xl font-bold text-white">Chrome Extension</h3>
+            <p class="mt-3 text-gray-300">
               A visual DOM editor for live CSS/text editing without DevTools, plus a
               responsive device simulator, SVG-to-Base64 converter, and a JS live
               execution environment.
             </p>
           </article>
         </div>
+      </div>
+    </section>
 
-        <div class="section">
-          <h2>📬 Contact</h2>
-          <p>
-            <a href="mailto:buiduyanh.17042001@gmail.com">buiduyanh.17042001@gmail.com</a>
-            ·
-            <a href="https://github.com/duyanh-dev" target="_blank" rel="noreferrer"
-              >github.com/duyanh-dev</a
-            >
-          </p>
-        </div>
-      </section>
-    </main>
+    <footer id="contact" class="bg-dark px-6 py-20 md:px-12 md:py-28">
+      <div class="mx-auto flex max-w-6xl flex-col items-center text-center">
+        <h2 class="font-display text-[12vw] font-bold leading-none text-white md:text-[8vw]">
+          LET'S TALK
+        </h2>
+        <p class="mt-6 text-lg text-gray-text">
+          Reach out for collaboration opportunities.
+        </p>
+        <a
+          href="mailto:buiduyanh.17042001@gmail.com"
+          class="mt-10 rounded-full bg-acid px-10 py-4 font-bold text-black transition-transform hover:scale-105"
+        >
+          buiduyanh.17042001@gmail.com
+        </a>
+        <a
+          href="https://github.com/duyanh-dev"
+          target="_blank"
+          rel="noreferrer"
+          class="mt-5 text-sm uppercase tracking-widest text-gray-text transition-colors hover:text-acid"
+        >
+          github.com/duyanh-dev
+        </a>
+      </div>
+    </footer>
+
+    <script>
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) entry.target.classList.add("in-view");
+          });
+        },
+        { threshold: 0.1 }
+      );
+      document.querySelectorAll(".reveal-up").forEach((el) => observer.observe(el));
+    </script>
   </body>
 </html>
