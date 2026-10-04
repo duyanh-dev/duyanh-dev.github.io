@@ -64,11 +64,13 @@
       };
     </script>
     <style>
-      body {
-        background-color: #050505;
-        color: #ffffff;
-        overflow-x: hidden;
-      }
+      html, body {
+  background-color: #050505;
+  color: #ffffff;
+  overflow-x: hidden; 
+  width: 100%;
+  position: relative;
+}
       ::selection {
         background-color: #ccff00;
         color: #000;
@@ -85,25 +87,73 @@
       ::-webkit-scrollbar-thumb:hover {
         background: #ccff00;
       }
-      .reveal-up {
-        opacity: 0;
-        transform: translateY(40px);
-        transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-      }
+.text-reveal {
+  background: linear-gradient(to right, #ffffff 50%, #333333 50%);
+  background-size: 200% 100%;
+  background-position: 100% 0;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+}
       .reveal-up.in-view {
         opacity: 1;
         transform: translateY(0);
       }
+
+
+@media (min-width: 768px) {
+  body { cursor: none; }
+  a, button { cursor: none; }
+}
+
+.cursor-dot {
+  width: 8px; height: 8px;
+  background-color: #CCFF00;
+  border-radius: 50%;
+  position: fixed;
+  top: 0; left: 0;
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%, -50%);
+}
+
+.cursor-outline {
+  width: 40px; height: 40px;
+  border: 1px solid rgba(204, 255, 0, 0.5);
+  border-radius: 50%;
+  position: fixed;
+  top: 0; left: 0;
+  pointer-events: none;
+  z-index: 9998;
+  transform: translate(-50%, -50%);
+  transition: width 0.3s, height 0.3s, background-color 0.3s;
+}
+
+.cursor-outline.hovering {
+  width: 70px; height: 70px;
+  background-color: rgba(204, 255, 0, 0.1);
+  border-color: transparent;
+}
     </style>
   </head>
   <body class="antialiased">
+
+    <!--  7: CINEMATIC PRELOADER -->
+    <div class="preloader fixed inset-0 z-[99999] flex flex-col items-center justify-center bg-dark text-acid">
+      <div class="overflow-hidden font-display text-[12vw] font-bold leading-none tracking-tighter">
+        <span class="counter inline-block">0</span>%
+      </div>
+      <div class="mt-8 h-[2px] w-0 bg-acid loading-bar"></div>
+    </div>
+
+    <div class="cursor-dot hidden md:block"></div>
+<div class="cursor-outline hidden md:block"></div>
     <nav
       class="fixed top-0 z-50 w-full border-b border-subtle/60 bg-dark/80 px-6 py-4 backdrop-blur md:px-12"
     >
       <div class="mx-auto flex max-w-6xl items-center justify-between">
-        <a href="#" class="font-display text-xl font-bold tracking-tight text-white"
-          >DUY.ANH</a
-        >
+        <a href="#" data-value="DUY.ANH" class="hacker-text font-display text-xl font-bold tracking-tight text-white">DUY.ANH</a>
         <div
           class="hidden items-center gap-8 text-xs font-medium uppercase tracking-[0.25em] text-white md:flex"
         >
@@ -128,7 +178,7 @@
           FRONTEND DEVELOPER
         </p>
         <h1
-          class="reveal-up font-display text-[15vw] font-bold uppercase leading-[0.9] tracking-tighter text-white md:text-[11vw]"
+          class="reveal-up font-display text-[15vw] font-bold uppercase leading-[0.9] tracking-tighter text-white md:text-[11vw] "
         >
           Duy Anh<br />
           <span class="text-gray-text">Bui</span>
@@ -142,24 +192,24 @@
     </section>
 
     <section id="about" class="border-b border-subtle px-6 py-16 md:px-12 md:py-20">
-      <div class="mx-auto grid max-w-6xl grid-cols-1 gap-10 md:grid-cols-2 md:gap-16">
-        <div class="reveal-up">
-          <h2 class="mb-8 font-mono text-xs uppercase tracking-widest text-acid">
-            About
-          </h2>
-          <p class="font-display text-3xl font-bold leading-tight text-white md:text-5xl">
-            Hi, I'm Duy Anh Bui 👋
-          </p>
-        </div>
-        <div class="reveal-up">
-          <p class="text-lg leading-relaxed text-gray-300">
-            I focus on crafting performant interfaces that are both user-friendly and
-            production-ready, from pixel-perfect implementation to maintainable frontend
-            architecture.
-          </p>
-        </div>
-      </div>
-    </section>
+  <div class="mx-auto grid max-w-6xl grid-cols-1 gap-10 md:grid-cols-2 md:gap-16">
+    <div>
+      <h2 class="mb-8 font-mono text-xs uppercase tracking-widest text-acid">About</h2>
+      <!-- Đổi class p này -->
+      <p class="font-display text-3xl font-bold leading-tight text-reveal md:text-5xl">
+        Hi, I'm Duy Anh Bui 👋
+      </p>
+    </div>
+    <div>
+      <!-- Đổi class p này -->
+      <p class="text-xl leading-relaxed font-bold text-reveal md:text-3xl">
+        I focus on crafting performant interfaces that are both user-friendly and
+        production-ready, from pixel-perfect implementation to maintainable frontend
+        architecture.
+      </p>
+    </div>
+  </div>
+</section>
 
     <section id="stack" class="border-b border-subtle px-6 py-16 md:px-12 md:py-20">
       <div class="mx-auto max-w-6xl">
@@ -263,12 +313,31 @@
       </div>
     </section>
 
-    <section id="projects" class="border-b border-subtle px-6 py-16 md:px-12 md:py-20">
+    <!-- INFINITE MARQUEE (SMALL & SLEEK) -->
+    <div class="marquee-wrapper relative flex overflow-hidden border-b border-t border-acid bg-acid py-2 text-black">
+      <div class="marquee-content flex w-max items-center gap-6 font-mono text-sm font-bold uppercase tracking-widest md:text-base">
+        <span>Available for Freelance</span><span class="text-xs opacity-50">●</span>
+        <span>Frontend Developer</span><span class="text-xs opacity-50">●</span>
+        <span>Creative Coder</span><span class="text-xs opacity-50">●</span>
+        
+        <span>Available for Freelance</span><span class="text-xs opacity-50">●</span>
+        <span>Frontend Developer</span><span class="text-xs opacity-50">●</span>
+        <span>Creative Coder</span><span class="text-xs opacity-50">●</span>
+
+        <span>Available for Freelance</span><span class="text-xs opacity-50">●</span>
+        <span>Frontend Developer</span><span class="text-xs opacity-50">●</span>
+        <span>Creative Coder</span><span class="text-xs opacity-50">●</span>
+      </div>
+    </div>
+
+   <section id="projects" class="border-b border-subtle px-6 py-16 md:px-12 md:py-20">
       <div class="mx-auto max-w-6xl">
         <h2 class="mb-10 font-display text-5xl font-bold text-white md:text-7xl">
           Personal Projects
         </h2>
+        <!-- Đổi thành grid-cols-2 hoặc giữ nguyên để các dự án xếp thành 2 cột đều đặn -->
         <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+          
           <article class="reveal-up rounded-2xl border border-white/10 bg-subtle/30 p-6">
             <p class="mb-2 font-mono text-xs uppercase tracking-widest text-acid">
               Project 01
@@ -288,6 +357,7 @@
               View Project
             </a>
           </article>
+
           <article class="reveal-up rounded-2xl border border-white/10 bg-subtle/30 p-6">
             <p class="mb-2 font-mono text-xs uppercase tracking-widest text-acid">
               Project 02
@@ -307,9 +377,55 @@
               View Project
             </a>
           </article>
+
+          <article class="reveal-up rounded-2xl border border-white/10 bg-subtle/30 p-6">
+            <p class="mb-2 font-mono text-xs uppercase tracking-widest text-acid">
+              Project 03
+            </p>
+            <h3 class="font-display text-3xl font-bold text-white">FinSnap</h3>
+            <p class="mt-3 text-gray-300">
+              A visual-first expense tracking mobile application built with React Native and Expo. It transforms financial transactions into visual memories with an engaging, user-centric interface.
+            </p>
+            <a
+              href="https://duyanh-dev.github.io/finsnap-page/"
+              target="_blank"
+              rel="noreferrer"
+              class="mt-5 inline-block text-sm uppercase tracking-widest text-acid transition-colors hover:text-white"
+            >
+              View Project
+            </a>
+          </article>
+
+          <article class="reveal-up rounded-2xl border border-white/10 bg-subtle/30 p-6">
+            <p class="mb-2 font-mono text-xs uppercase tracking-widest text-acid">
+              Project 04
+            </p>
+            <h3 class="font-display text-3xl font-bold text-white">TripPlanner</h3>
+            <p class="mt-3 text-gray-300">
+              A web-based itinerary planning tool featuring interactive map integration and seamless activity scheduling, designed with highly modular architecture and optimized UI/UX.
+            </p>
+            <a
+              href="https://duyanh-dev.github.io/tripPlanner-landingpage/"
+              target="_blank"
+              rel="noreferrer"
+              class="mt-5 inline-block text-sm uppercase tracking-widest text-acid transition-colors hover:text-white"
+            >
+              View Project
+            </a>
+          </article>
+
         </div>
       </div>
     </section>
+
+    <!--  8: SVG SCROLL PROGRESS & BACK TO TOP -->
+    <div class="progress-wrap fixed bottom-10 right-10 z-[90] hidden h-14 w-14 cursor-pointer items-center justify-center rounded-full bg-dark/80 backdrop-blur transition-transform hover:scale-110 md:flex">
+      <svg class="absolute inset-0 h-full w-full -rotate-90" viewBox="0 0 100 100">
+        <circle cx="50" cy="50" r="46" fill="none" class="stroke-subtle" stroke-width="4"></circle>
+        <circle cx="50" cy="50" r="46" fill="none" class="progress-path stroke-acid" stroke-width="4" stroke-dasharray="289.02" stroke-dashoffset="289.02" stroke-linecap="round"></circle>
+      </svg>
+      <span class="text-acid font-bold">↑</span>
+    </div>
 
     <footer id="contact" class="bg-dark px-6 py-20 md:px-12 md:py-28">
       <div class="mx-auto flex max-w-6xl flex-col items-center text-center">
@@ -336,16 +452,279 @@
       </div>
     </footer>
 
-    <script>
-      const observer = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((entry) => {
-            if (entry.isIntersecting) entry.target.classList.add("in-view");
-          });
-        },
-        { threshold: 0.1 }
-      );
-      document.querySelectorAll(".reveal-up").forEach((el) => observer.observe(el));
-    </script>
+    <!-- GSAP & ScrollTrigger -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+<script src="https://unpkg.com/@studio-freight/lenis@1.0.34/dist/lenis.min.js"></script>
+
+<script>
+  gsap.registerPlugin(ScrollTrigger);
+
+  // 1. HERO SECTION: Skew Intro & Parallax Scroll
+  const heroTl = gsap.timeline({ paused: true }); 
+  
+  heroTl.from("nav", { yPercent: -100, duration: 1, ease: "power4.out" })
+        .from("h1", { y: 150, opacity: 0, skewY: 5, duration: 1.2, ease: "power4.out" }, "-=0.5")
+        .from("h1 + p", { y: 30, opacity: 0, duration: 1, ease: "power3.out" }, "-=0.8")
+        .from(".blur-\\[140px\\]", { scale: 0, opacity: 0, duration: 2, ease: "power2.out" }, "-=1.5");
+
+  // 2. Timeline của Preloader
+  const preloaderTl = gsap.timeline();
+  let counter = { value: 0 }; 
+
+  preloaderTl.to(counter, {
+    value: 100,
+    duration: 1.0, 
+    ease: "power4.inOut",
+    onUpdate: () => document.querySelector(".counter").innerText = Math.round(counter.value)
+  })
+  .to(".loading-bar", { width: "200px", duration: 2.5, ease: "power4.inOut" }, "<")
+  .to(".preloader", { yPercent: -100, duration: 1.2, ease: "power4.inOut", delay: 0.2 }) 
+  .call(() => heroTl.play(), null, "-=0.5");
+  gsap.to("section.min-h-screen .max-w-6xl", {
+    y: -150,
+    opacity: 0,
+    scrollTrigger: { 
+      trigger: "body",       
+      start: "top top",      
+      end: "500px top",      
+      scrub: 1               
+    } 
+  });
+
+  // 2. ABOUT SECTION
+  gsap.utils.toArray(".text-reveal").forEach(text => {
+    gsap.to(text, {
+      backgroundPosition: "0% 0", 
+      ease: "none",
+      scrollTrigger: {
+        trigger: text,
+        start: "top 85%",
+        end: "bottom 50%",
+        scrub: 0.5 
+      }
+    });
+  });
+
+  // 3. TECH STACK & PROJECTS: 
+  gsap.utils.toArray('.grid').forEach(grid => {
+    const cards = grid.querySelectorAll('article');
+    gsap.from(cards, {
+      scrollTrigger: { trigger: grid, start: "top 80%", toggleActions: "play none none reverse" },
+      y: 100,
+      rotationX: -30, // Hiệu ứng lật thẻ
+      opacity: 0,
+      duration: 1,
+      stagger: 0.2, // Từng thẻ lật lên một
+      ease: "power3.out",
+      transformOrigin: "top center"
+    });
+  });
+
+  // 4. EXPERIENCE: 
+  gsap.utils.toArray('#experience article').forEach((item, i) => {
+    gsap.from(item, {
+      scrollTrigger: { trigger: item, start: "top 85%", toggleActions: "play none none reverse" },
+      x: i % 2 === 0 ? -100 : 100, 
+      opacity: 0,
+      duration: 1,
+      ease: "power3.out"
+    });
+  });
+
+  gsap.from("footer h2", {
+    scale: 0.5,
+    opacity: 0,
+    y: 50,
+    scrollTrigger: { 
+      trigger: "footer", 
+      start: "top bottom", 
+      end: "center center", 
+      scrub: 1 
+    }
+  });
+
+  document.querySelectorAll(".reveal-up").forEach(el => el.classList.remove("reveal-up"));
+
+  // --- 1: CUSTOM SMOOTH CURSOR ---
+  const cursorDot = document.querySelector('.cursor-dot');
+  const cursorOutline = document.querySelector('.cursor-outline');
+  
+  let mouseX = 0, mouseY = 0;
+  let outlineX = 0, outlineY = 0;
+
+  window.addEventListener('mousemove', (e) => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+    gsap.set(cursorDot, { x: mouseX, y: mouseY });
+  });
+
+  gsap.ticker.add(() => {
+    outlineX += (mouseX - outlineX) * 0.15; 
+    outlineY += (mouseY - outlineY) * 0.15;
+    gsap.set(cursorOutline, { x: outlineX, y: outlineY });
+  });
+
+  document.querySelectorAll('a').forEach(link => {
+    link.addEventListener('mouseenter', () => cursorOutline.classList.add('hovering'));
+    link.addEventListener('mouseleave', () => cursorOutline.classList.remove('hovering'));
+  });
+
+
+  // --- 2: MAGNETIC BUTTON ---
+  const magneticBtn = document.querySelector('footer a.bg-acid');
+  
+  magneticBtn.addEventListener('mousemove', function(e) {
+    const rect = this.getBoundingClientRect();
+    const x = e.clientX - rect.left - rect.width / 2;
+    const y = e.clientY - rect.top - rect.height / 2;
+    
+    gsap.to(this, { x: x * 0.3, y: y * 0.3, duration: 0.4, ease: "power2.out" });
+  });
+  
+  magneticBtn.addEventListener('mouseleave', function() {
+    gsap.to(this, { x: 0, y: 0, duration: 0.7, ease: "elastic.out(1, 0.3)" });
+  });
+
+  // ---  3: LENIS SMOOTH SCROLL ---
+  const lenis = new Lenis({
+    duration: 1.2,
+    easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), 
+  });
+
+  lenis.on('scroll', ScrollTrigger.update);
+  gsap.ticker.add((time) => { lenis.raf(time * 1000) });
+  gsap.ticker.lagSmoothing(0);
+
+  // ---  4: HACKER TEXT SCRAMBLE ---
+  const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*";
+  
+  document.querySelectorAll('.hacker-text').forEach(el => {
+    el.addEventListener('mouseover', event => {
+      let iterations = 0;
+      
+      clearInterval(event.target.interval);
+      
+      event.target.interval = setInterval(() => {
+        event.target.innerText = event.target.innerText.split("")
+          .map((letter, index) => {
+            if(index < iterations) return event.target.dataset.value[index];
+            return letters[Math.floor(Math.random() * letters.length)]
+          }).join("");
+        
+        if(iterations >= event.target.dataset.value.length) { 
+          clearInterval(event.target.interval);
+        }
+        
+        iterations += 1 / 3; 
+      }, 30);
+    });
+  });
+
+
+  // ---  5: INFINITE MARQUEE  ---
+  const marqueeContent = document.querySelector(".marquee-content");
+  
+  const marqueeTween = gsap.to(marqueeContent, {
+    xPercent: -33.33,
+    repeat: -1,
+    duration: 15,    
+    ease: "none"
+  });
+
+  ScrollTrigger.create({
+    trigger: "body",
+    start: "top top",
+    end: "bottom bottom",
+    onUpdate: (self) => {
+      let velocity = Math.abs(self.getVelocity() / 300);
+      
+      gsap.to(marqueeTween, { 
+        timeScale: 1 + velocity, 
+        duration: 0.3, 
+        ease: "power2.out", 
+        overwrite: "auto" 
+      });
+      
+      gsap.to(marqueeTween, { 
+        timeScale: 1, 
+        duration: 1, 
+        delay: 0.2, 
+        ease: "power2.out",
+        overwrite: "auto" 
+      });
+    }
+  });
+
+// ---  6: 3D HOVER TILT CARDS (HOLOGRAPHIC EDITION) ---
+  const projectCards = document.querySelectorAll('#projects article');
+
+  projectCards.forEach(card => {
+    gsap.set(card, { transformPerspective: 800, transformStyle: "preserve-3d" });
+
+    card.addEventListener('mousemove', (e) => {
+      const rect = card.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+      
+      const mouseX = ((e.clientX - rect.left) / rect.width) * 100;
+      const mouseY = ((e.clientY - rect.top) / rect.height) * 100;
+      
+      const xAxis = ((e.clientX - centerX) / (rect.width / 2)) * 20;
+      const yAxis = ((e.clientY - centerY) / (rect.height / 2)) * -20; 
+      
+      gsap.to(card, {
+        rotationY: xAxis,
+        rotationX: yAxis,
+        scale: 1.05, 
+        ease: "power2.out",
+        duration: 0.4,
+        backgroundImage: `radial-gradient(circle at ${mouseX}% ${mouseY}%, rgba(204, 255, 0, 0.15) 0%, transparent 60%)`,
+        boxShadow: `${-xAxis * 1.5}px ${yAxis * 1.5}px 30px rgba(204, 255, 0, 0.15)`
+      });
+      
+      const children = card.children;
+      gsap.to(children[0], { translateZ: 30, duration: 0.4, ease: "power2.out" }); 
+      gsap.to(children[1], { translateZ: 60, duration: 0.4, ease: "power2.out", scale: 1.05 }); 
+      gsap.to(children[2], { translateZ: 40, duration: 0.4, ease: "power2.out" }); 
+      gsap.to(children[3], { translateZ: 50, duration: 0.4, ease: "power2.out" }); 
+    });
+
+    card.addEventListener('mouseleave', () => {
+      gsap.to(card, {
+        rotationY: 0,
+        rotationX: 0,
+        scale: 1,
+        ease: "elastic.out(1, 0.3)",
+        duration: 1.2, 
+        backgroundImage: `none`,
+        boxShadow: "0px 0px 0px rgba(204, 255, 0, 0)"
+      });
+      
+      gsap.to(card.children, { translateZ: 0, scale: 1, duration: 0.4, ease: "power2.out" });
+    });
+  });
+
+  // ---  8: SVG SCROLL PROGRESS ---
+  const progressPath = document.querySelector(".progress-path");
+  
+  gsap.to(progressPath, {
+    strokeDashoffset: 0,
+    ease: "none",
+    scrollTrigger: {
+      trigger: "body",
+      start: "top top",
+      end: "bottom bottom",
+      scrub: 0.3 
+    }
+  });
+
+  document.querySelector(".progress-wrap").addEventListener("click", () => {
+    lenis.scrollTo(0, { 
+      duration: 1.5, 
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)) 
+    });
+  });
+</script>
   </body>
 </html>
