@@ -67,145 +67,7 @@
     <script type="importmap">
       { "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js" } }
     </script>
-    <style>
-      :root { --acid: #ccff00; }
-      html, body {
-        background-color: #050505;
-        color: #fff;
-        overflow-x: hidden;
-        width: 100%;
-        position: relative;
-      }
-      html.lenis, html.lenis body { height: auto; }
-      .lenis.lenis-smooth { scroll-behavior: auto !important; }
-      ::selection { background-color: #ccff00; color: #000; }
-      ::-webkit-scrollbar { width: 5px; }
-      ::-webkit-scrollbar-track { background: #050505; }
-      ::-webkit-scrollbar-thumb { background: #333; }
-      ::-webkit-scrollbar-thumb:hover { background: #ccff00; }
-
-      /* flat texture: dot grid */
-      .dot-grid {
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='36' height='36'%3E%3Ccircle cx='1' cy='1' r='1' fill='%23ffffff' fill-opacity='.14'/%3E%3C/svg%3E");
-      }
-
-      /* custom cursor (transform-only, GPU friendly) */
-      .cursor-dot, .cursor-outline { display: none; position: fixed; top: 0; left: 0; pointer-events: none; border-radius: 50%; will-change: transform; opacity: 0; }
-      .cursor-dot { width: 8px; height: 8px; background: #ccff00; z-index: 9999; }
-      .cursor-outline {
-        width: 40px; height: 40px; border: 1px solid rgba(204,255,0,.55); z-index: 9998;
-        align-items: center; justify-content: center;
-        transition: width .3s, height .3s, background-color .3s, border-color .3s;
-      }
-      .cursor-outline span {
-        font: 700 11px "JetBrains Mono", monospace; color: #000; letter-spacing: .12em;
-        opacity: 0; transition: opacity .2s;
-      }
-      .cursor-outline.hovering { width: 64px; height: 64px; background: rgba(204,255,0,.12); border-color: transparent; }
-      .cursor-outline.label { width: 92px; height: 92px; background: #ccff00; border-color: transparent; }
-      .cursor-outline.label span { opacity: 1; }
-      @media (hover: hover) and (pointer: fine) {
-        body, a, button, canvas { cursor: none; }
-        .cursor-dot { display: block; }
-        .cursor-outline { display: flex; }
-      }
-
-      /* hero */
-      .hero-title { font-size: clamp(3.6rem, 17vw, 7rem); line-height: .9; letter-spacing: -.04em; }
-      @media (min-width: 768px) { .hero-title { font-size: clamp(3.2rem, 7vw, 8.4rem); } }
-      .h-line { padding-bottom: .07em; white-space: nowrap; }
-      .hero-text { min-width: 0; }
-      .outline-text {
-        color: transparent; -webkit-text-stroke: 1.5px #fff; transition: color .4s, -webkit-text-stroke-color .4s;
-      }
-      .outline-text:hover { color: #ccff00; -webkit-text-stroke-color: #ccff00; }
-      .corner { position: absolute; width: 18px; height: 18px; border-color: #ccff00; pointer-events: none; }
-      .scroll-line { width: 1px; height: 48px; background: #333; position: relative; overflow: hidden; }
-      .scroll-line::after {
-        content: ""; position: absolute; left: 0; top: 0; width: 1px; height: 18px; background: #ccff00;
-        animation: drop 1.6s cubic-bezier(.7,0,.3,1) infinite;
-      }
-      @keyframes drop { 0% { transform: translateY(-20px); } 100% { transform: translateY(52px); } }
-
-      /* section titles */
-      .sec-title { font-family: "Syne", sans-serif; font-weight: 800; letter-spacing: -.03em; line-height: .95;
-        font-size: clamp(2.8rem, 9vw, 6.5rem); }
-
-      /* nav */
-      .nav-link { position: relative; transition: color .3s; }
-      .nav-link::after {
-        content: ""; position: absolute; left: 0; right: 0; bottom: -6px; height: 1px; background: #ccff00;
-        transform: scaleX(0); transform-origin: left; transition: transform .35s;
-      }
-      .nav-link:hover, .nav-link.active { color: #ccff00; }
-      .nav-link:hover::after, .nav-link.active::after { transform: scaleX(1); }
-
-      /* stack */
-      .chip {
-        display: inline-flex; align-items: center; border: 1px solid rgba(255,255,255,.16); border-radius: 999px;
-        padding: .55rem 1.05rem; font: 500 .85rem "JetBrains Mono", monospace; color: #ddd;
-        transition: background-color .25s, color .25s, border-color .25s; will-change: transform;
-      }
-      .chip:hover { background: #ccff00; color: #000; border-color: #ccff00; }
-
-      /* experience timeline */
-      .tl { position: relative; padding-left: 2rem; --dot: -2rem; }
-      @media (min-width: 768px) { .tl { padding-left: 3.5rem; --dot: -3.5rem; } }
-      .tl::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 1px; background: #222; }
-      .tl-progress { position: absolute; left: 0; top: 0; bottom: 0; width: 1px; background: #ccff00; transform-origin: top; transform: scaleY(0); }
-      .job { position: relative; padding: 2.5rem 0; border-top: 1px solid #222; }
-      .job:first-child { border-top: 0; }
-      .job::before {
-        content: ""; position: absolute; left: var(--dot); top: 3.1rem; width: 11px; height: 11px; margin-left: -5px;
-        border: 1px solid #ccff00; background: #050505; border-radius: 50%; transition: background-color .3s;
-      }
-      .job:hover::before { background: #ccff00; }
-      .job h3 { transition: color .3s; }
-      .job:hover h3 { color: #ccff00; }
-      .job li { position: relative; padding-left: 1.4rem; }
-      .job li::before { content: ""; position: absolute; left: 0; top: .7em; width: 7px; height: 7px; background: #ccff00; }
-
-      /* marquee */
-      .m-item { display: inline-flex; align-items: center; gap: 1.6rem; padding-right: 1.6rem; white-space: nowrap; }
-      .m-outline { color: transparent; -webkit-text-stroke: 1px #ccff00; }
-
-      /* project rows */
-      .project-row { position: relative; display: block; overflow: hidden; border-top: 1px solid #222; color: #fff; }
-      .project-row:last-child { border-bottom: 1px solid #222; }
-      .project-row .pr-bg {
-        position: absolute; inset: 0; background: #ccff00; transform: scaleY(0); transform-origin: bottom;
-        transition: transform .55s cubic-bezier(.7,0,.2,1);
-      }
-      .project-row > div { position: relative; z-index: 1; transition: color .35s, transform .55s cubic-bezier(.7,0,.2,1); }
-      .project-row .pr-desc, .project-row .pr-num { color: #aaa; transition: color .35s; }
-      .project-row .pr-num { color: #ccff00; }
-      .project-row .pr-arrow { transition: transform .45s cubic-bezier(.7,0,.2,1); display: inline-block; }
-      @media (hover: hover) {
-        .project-row:hover .pr-bg { transform: scaleY(1); }
-        .project-row:hover > div { color: #000; transform: translateX(14px); }
-        .project-row:hover .pr-desc, .project-row:hover .pr-num { color: #000; }
-        .project-row:hover .pr-arrow { transform: translate(6px, -6px); }
-      }
-
-      /* mobile menu */
-      #mobileMenu { clip-path: inset(0 0 100% 0); visibility: hidden; }
-
-      #hero3d canvas { display: block; touch-action: pan-y; }
-      #kbInput { position: absolute; left: 0; top: 0; width: 1px; height: 1px; opacity: 0; font-size: 16px; pointer-events: none; border: 0; padding: 0; resize: none; }
-      #kbDone {
-        display: none; position: absolute; top: 12px; right: 12px; z-index: 5; border: 1px solid #ccff00; color: #ccff00;
-        background: #050505; font: 500 11px "JetBrains Mono", monospace; letter-spacing: .2em; text-transform: uppercase;
-        padding: 8px 14px; border-radius: 999px;
-      }
-      #hero3d.is-edit #kbDone { display: block; }
-      #hero3d.is-edit #heroHint { display: none; }
-      /* mobile: while typing, the 3D scene becomes an overlay sized to the visible area ABOVE the on-screen keyboard */
-      #hero3d.kb-mode {
-        position: fixed; inset: auto; left: 0; right: 0; top: var(--vv-top, 0px); height: var(--vv-h, 100dvh);
-        z-index: 80; background: #050505;
-      }
-      html.kb-lock, html.kb-lock body { overflow: hidden; }
-    </style>
+    <link rel="stylesheet" href="./style.css">
   </head>
   <body class="antialiased">
     <!-- PRELOADER -->
@@ -430,55 +292,153 @@
           <h2 class="sec-title text-white" data-reveal>Personal Projects</h2>
           <span class="font-mono text-xs text-acid">04</span>
         </div>
-        <div>
-          <a href="https://duyanh-dev.github.io/da-tool-landingpage/" target="_blank" rel="noreferrer" class="project-row" data-cursor="OPEN">
-            <span class="pr-bg"></span>
-            <div class="grid gap-4 px-0 py-9 md:grid-cols-12 md:items-center md:px-4">
-              <p class="pr-num font-mono text-xs uppercase tracking-widest md:col-span-2">Project 01</p>
-              <h3 class="font-display text-3xl font-bold md:col-span-4 md:text-4xl">Desktop Utility App</h3>
-              <p class="pr-desc md:col-span-4">
-                A multi-tool productivity suite featuring a CodePen clone, SCSS-to-CSS
-                compiler, JSON formatter, note-taking system (Notion-style), and automated
-                leave request assistant.
-              </p>
-              <span class="font-mono text-sm uppercase tracking-widest md:col-span-2 md:text-right">View Project <span class="pr-arrow">↗</span></span>
+        <div class="pj-wrap">
+          <a href="https://duyanh-dev.github.io/da-tool-landingpage/" target="_blank" rel="noreferrer" class="pj" data-cursor="OPEN">
+            <div>
+              <p class="font-mono text-xs uppercase tracking-widest text-acid">Project 01 — Productivity</p>
+              <h3 class="mt-4 font-display text-4xl font-bold md:text-5xl">Desktop Utility App</h3>
+              <p class="mt-5 text-gray-text">A multi-tool productivity suite featuring a CodePen clone, SCSS-to-CSS compiler, JSON formatter, note-taking system (Notion-style), and automated leave request assistant.</p>
+              <div class="mt-6 flex flex-wrap gap-2"><span class="tag">CodePen clone</span><span class="tag">SCSS compiler</span><span class="tag">JSON formatter</span><span class="tag">Notes</span></div>
+              <span class="pj-cta">View project <b>↗</b></span>
             </div>
+            <div class="pj-stage dot-grid"><div class="pj-tilt">
+              <div class="mk"><div class="mk-bar"><i></i><i></i><i></i></div>
+                <div class="mk-tabs"><span>CodePen</span><span>SCSS</span><span>JSON</span><span>Notes</span></div>
+                <div class="mk-body"><div class="mk-code"><u></u><u></u><u></u><u></u><u></u><u></u></div><div class="mk-prev"><b></b></div></div>
+              </div>
+            </div></div>
           </a>
-          <a href="https://duyanh-dev.github.io/da-extension/" target="_blank" rel="noreferrer" class="project-row" data-cursor="OPEN">
-            <span class="pr-bg"></span>
-            <div class="grid gap-4 px-0 py-9 md:grid-cols-12 md:items-center md:px-4">
-              <p class="pr-num font-mono text-xs uppercase tracking-widest md:col-span-2">Project 02</p>
-              <h3 class="font-display text-3xl font-bold md:col-span-4 md:text-4xl">Chrome Extension</h3>
-              <p class="pr-desc md:col-span-4">
-                A visual DOM editor for live CSS/text editing without DevTools, plus a
-                responsive device simulator, SVG-to-Base64 converter, and a JS live
-                execution environment.
-              </p>
-              <span class="font-mono text-sm uppercase tracking-widest md:col-span-2 md:text-right">View Project <span class="pr-arrow">↗</span></span>
+ 
+          <a href="https://duyanh-dev.github.io/da-extension/" target="_blank" rel="noreferrer" class="pj" data-cursor="OPEN">
+            <div>
+              <p class="font-mono text-xs uppercase tracking-widest text-acid">Project 02 — Browser tooling</p>
+              <h3 class="mt-4 font-display text-4xl font-bold md:text-5xl">Chrome Extension</h3>
+              <p class="mt-5 text-gray-text">A visual DOM editor for live CSS/text editing without DevTools, plus a responsive device simulator, SVG-to-Base64 converter, and a JS live execution environment.</p>
+              <div class="mt-6 flex flex-wrap gap-2"><span class="tag">DOM editor</span><span class="tag">Device simulator</span><span class="tag">SVG → Base64</span><span class="tag">JS runner</span></div>
+              <span class="pj-cta">View project <b>↗</b></span>
             </div>
+            <div class="pj-stage dot-grid"><div class="pj-tilt">
+              <div class="mk"><div class="mk-bar"><i></i><i></i><i></i></div>
+                <div class="mk-page">
+                  <div class="el h" data-n="nav.header · 100% × 30"></div>
+                  <div class="el t" data-n="h1.title · 62% × 26"></div>
+                  <div class="el p" data-n="p.lead · 80% × 12"></div>
+                  <div class="el b" data-n="button.cta · 96 × 30"></div>
+                  <div class="mk-sel"><em></em></div>
+                </div>
+              </div>
+            </div></div>
           </a>
-          <a href="https://duyanh-dev.github.io/finsnap-page/" target="_blank" rel="noreferrer" class="project-row" data-cursor="OPEN">
-            <span class="pr-bg"></span>
-            <div class="grid gap-4 px-0 py-9 md:grid-cols-12 md:items-center md:px-4">
-              <p class="pr-num font-mono text-xs uppercase tracking-widest md:col-span-2">Project 03</p>
-              <h3 class="font-display text-3xl font-bold md:col-span-4 md:text-4xl">FinSnap</h3>
-              <p class="pr-desc md:col-span-4">
-                A visual-first expense tracking mobile application built with React Native and Expo. It transforms financial transactions into visual memories with an engaging, user-centric interface.
-              </p>
-              <span class="font-mono text-sm uppercase tracking-widest md:col-span-2 md:text-right">View Project <span class="pr-arrow">↗</span></span>
+ 
+          <a href="https://duyanh-dev.github.io/finsnap-page/" target="_blank" rel="noreferrer" class="pj" data-cursor="OPEN">
+            <div>
+              <p class="font-mono text-xs uppercase tracking-widest text-acid">Project 03 — Mobile</p>
+              <h3 class="mt-4 font-display text-4xl font-bold md:text-5xl">FinSnap</h3>
+              <p class="mt-5 text-gray-text">A visual-first expense tracking mobile application built with React Native and Expo. It transforms financial transactions into visual memories with an engaging, user-centric interface.</p>
+              <div class="mt-6 flex flex-wrap gap-2"><span class="tag">React Native</span><span class="tag">Expo</span><span class="tag">Visual memories</span></div>
+              <span class="pj-cta">View project <b>↗</b></span>
             </div>
+            <div class="pj-stage dot-grid"><div class="pj-tilt">
+              <div class="phone">
+                <p class="ph-bal"><small>BALANCE</small>$<span class="bal">0.00</span></p>
+                <div class="tx"><b></b><span>Coffee</span><em>-4.50</em></div>
+                <div class="tx"><b></b><span>Groceries</span><em>-32.10</em></div>
+                <div class="tx"><b></b><span>Salary</span><em>+1,800</em></div>
+                <div class="tx"><b></b><span>Trip fund</span><em>-120</em></div>
+              </div>
+            </div></div>
           </a>
-          <a href="https://duyanh-dev.github.io/tripPlanner-landingpage/" target="_blank" rel="noreferrer" class="project-row" data-cursor="OPEN">
-            <span class="pr-bg"></span>
-            <div class="grid gap-4 px-0 py-9 md:grid-cols-12 md:items-center md:px-4">
-              <p class="pr-num font-mono text-xs uppercase tracking-widest md:col-span-2">Project 04</p>
-              <h3 class="font-display text-3xl font-bold md:col-span-4 md:text-4xl">TripPlanner</h3>
-              <p class="pr-desc md:col-span-4">
-                A web-based itinerary planning tool featuring interactive map integration and seamless activity scheduling, designed with highly modular architecture and optimized UI/UX.
-              </p>
-              <span class="font-mono text-sm uppercase tracking-widest md:col-span-2 md:text-right">View Project <span class="pr-arrow">↗</span></span>
+ 
+          <a href="https://duyanh-dev.github.io/tripPlanner-landingpage/" target="_blank" rel="noreferrer" class="pj" data-cursor="OPEN">
+            <div>
+              <p class="font-mono text-xs uppercase tracking-widest text-acid">Project 04 — Web app</p>
+              <h3 class="mt-4 font-display text-4xl font-bold md:text-5xl">TripPlanner</h3>
+              <p class="mt-5 text-gray-text">A web-based itinerary planning tool featuring interactive map integration and seamless activity scheduling, designed with highly modular architecture and optimized UI/UX.</p>
+              <div class="mt-6 flex flex-wrap gap-2"><span class="tag">Map integration</span><span class="tag">Scheduling</span><span class="tag">Modular architecture</span></div>
+              <span class="pj-cta">View project <b>↗</b></span>
             </div>
+            <div class="pj-stage dot-grid"><div class="pj-tilt">
+              <div class="mk"><div class="mk-bar"><i></i><i></i><i></i></div>
+                <div class="trip-body">
+                  <ul class="stops"><li>09:00 Coffee</li><li>12:00 Museum</li><li>15:00 Old town</li><li>19:00 Night market</li></ul>
+                  <div class="map"><span class="pin" style="left:18%;top:70%"></span><span class="pin" style="left:44%;top:40%"></span><span class="pin" style="left:68%;top:62%"></span><span class="pin" style="left:80%;top:18%"></span></div>
+                </div>
+              </div>
+            </div></div>
           </a>
+        </div>
+      </div>
+    </section>
+ 
+    <!-- PRINCIPLES -->
+    <section id="principles" class="border-b border-subtle px-6 py-20 md:px-12 md:py-28">
+      <div class="mx-auto max-w-7xl">
+        <div class="mb-12 flex items-end justify-between border-b border-subtle pb-6">
+          <h2 class="sec-title text-white" data-reveal>How I Build</h2>
+          <span class="font-mono text-xs text-acid">05</span>
+        </div>
+        <div class="pn-list">
+          <div class="pn-panel on"><div class="pn-in"><p class="font-mono text-xs">01</p><h3 class="mt-3 font-display text-3xl font-bold">Performance</h3><p class="pn-t mt-4">Optimizing for high-concurrency access, lean assets and animations that only touch transforms and opacity, so interfaces stay smooth on real devices.</p></div></div>
+          <div class="pn-panel"><div class="pn-in"><p class="font-mono text-xs">02</p><h3 class="mt-3 font-display text-3xl font-bold">Standards</h3><p class="pn-t mt-4">W3C-valid markup, cross-browser compatibility and SEO best practices, delivered mobile-first for clients who expect strict quality.</p></div></div>
+          <div class="pn-panel"><div class="pn-in"><p class="font-mono text-xs">03</p><h3 class="mt-3 font-display text-3xl font-bold">Architecture</h3><p class="pn-t mt-4">Modular components, a scalable UI template library and predictable state with Redux Toolkit, so teams ship faster without breaking things.</p></div></div>
+          <div class="pn-panel"><div class="pn-in"><p class="font-mono text-xs">04</p><h3 class="mt-3 font-display text-3xl font-bold">Craft</h3><p class="pn-t mt-4">Pixel-perfect translation of Figma designs, with the small motion and interaction details that make a product feel alive.</p></div></div>
+        </div>
+      </div>
+    </section>
+ 
+    <!-- LAB -->
+    <section id="lab" class="border-b border-subtle px-6 py-20 md:px-12 md:py-28">
+      <div class="mx-auto max-w-7xl">
+        <div class="mb-12 flex items-end justify-between border-b border-subtle pb-6">
+          <h2 class="sec-title text-white" data-reveal>The Lab</h2>
+          <span class="font-mono text-xs text-acid">06</span>
+        </div>
+        <div class="grid gap-6 md:grid-cols-2">
+          <div class="lab-tile md:col-span-2">
+            <p class="lab-k"><span>01 · 3D particle morph</span><span class="text-gray-text">three.js · 3,200 points</span></p>
+            <p class="lab-h"><b>Pick a shape</b> and the particles fly to form it. <b>Drag</b> to rotate, <b>click</b> the canvas to blast them apart.</p>
+            <div class="mb-3">
+              <button class="fx-btn on" data-sh="sphere">sphere</button><button class="fx-btn" data-sh="cube">cube</button><button class="fx-btn" data-sh="torus">torus</button><button class="fx-btn" data-sh="helix">DNA</button><button class="fx-btn" data-sh="da">DA</button>
+            </div>
+            <canvas id="mpCv" class="gl-cv"></canvas>
+          </div>
+          <div class="lab-tile">
+            <p class="lab-k"><span>02 · 3D stack globe</span><span class="text-gray-text">three.js</span></p>
+            <p class="lab-h"><b>Drag</b> to spin the globe, <b>hover</b> a word to pull it forward. Every word is a technology I work with.</p>
+            <canvas id="glCv" class="gl-cv"></canvas>
+          </div>
+          <div class="lab-tile">
+            <p class="lab-k"><span>03 · 3D navigation cube</span><span class="text-gray-text">CSS 3D</span></p>
+            <p class="lab-h"><b>Drag</b> to rotate the cube, <b>tap a face</b> to jump to that section of this page.</p>
+            <div class="cube-scene"><div class="cube">
+              <div class="f1" data-go="#about">About</div><div class="f2" data-go="#stack">Stack</div><div class="f3" data-go="#experience">Experience</div>
+              <div class="f4" data-go="#projects">Projects</div><div class="f5" data-go="#contact">Contact</div><div class="f6" data-go="0">Top</div>
+            </div></div>
+          </div>
+          <div class="lab-tile">
+            <p class="lab-k"><span>04 · Flexbox playground</span><span class="text-gray-text">CSS layout</span></p>
+            <p class="lab-h"><b>Click the buttons</b> to change the CSS. The boxes glide to their new places, and the code below updates.</p>
+            <div>
+              <button class="fx-btn on" data-p="flex-direction" data-v="row">row</button><button class="fx-btn" data-p="flex-direction" data-v="column">column</button>
+            </div>
+            <div>
+              <button class="fx-btn on" data-p="justify-content" data-v="flex-start">start</button><button class="fx-btn" data-p="justify-content" data-v="center">center</button><button class="fx-btn" data-p="justify-content" data-v="space-between">between</button><button class="fx-btn" data-p="justify-content" data-v="flex-end">end</button>
+            </div>
+            <div>
+              <button class="fx-btn on" data-p="align-items" data-v="flex-start">start</button><button class="fx-btn" data-p="align-items" data-v="center">center</button><button class="fx-btn" data-p="align-items" data-v="flex-end">end</button><button class="fx-btn" data-p="align-items" data-v="stretch">stretch</button>
+            </div>
+            <div class="fx"><i>1</i><i>2</i><i>3</i><i>4</i></div>
+            <pre id="fxCode" class="mt-3 font-mono text-[11px] leading-relaxed text-gray-text">flex-direction: row;
+justify-content: flex-start;
+align-items: flex-start;</pre>
+          </div>
+          <div class="lab-tile">
+            <p class="lab-k"><span>05 · Contrast checker</span><span class="text-gray-text">accessibility</span></p>
+            <p class="lab-h"><b>Pick a text color and a background.</b> It tells you whether the text is readable by WCAG accessibility rules.</p>
+            <p class="cr-row">text <input type="color" id="crF" value="#ccff00"> bg <input type="color" id="crB" value="#050505"> <b id="crR" class="text-white">0:1</b></p>
+            <div id="crDemo" class="cr-demo">Readable? Aa</div>
+            <div id="crBadges"></div>
+          </div>
         </div>
       </div>
     </section>
@@ -1479,5 +1439,203 @@
         gsap.to(r, { scale: 9, opacity: 0, duration: 0.7, ease: "power2.out", onComplete: () => r.remove() });
       });
     </script>
+
+<script type="module">
+  import * as THREE from "three";
+  const $ = (s, r = document) => r.querySelector(s), $$ = (s, r = document) => [...r.querySelectorAll(s)];
+  gsap.registerPlugin(ScrollTrigger);
+  const fine = matchMedia("(hover: hover) and (pointer: fine)").matches;
+
+  /* ---- project cards: reveal on scroll (all visible, no stacking) ---- */
+  $$(".pj").forEach((c) => gsap.from(c, { y: 70, opacity: 0, duration: 1, ease: "power3.out", scrollTrigger: { trigger: c, start: "top 92%", toggleActions: "play none none reverse" } }));
+
+  /* 3D tilt on each stage */
+  if (fine) $$(".pj-stage").forEach((s) => {
+    const t = $(".pj-tilt", s), qx = gsap.quickTo(t, "rotationX", { duration: 0.5 }), qy = gsap.quickTo(t, "rotationY", { duration: 0.5 });
+    s.addEventListener("pointermove", (e) => { const r = s.getBoundingClientRect(); qy(((e.clientX - r.left) / r.width - 0.5) * 22); qx(-((e.clientY - r.top) / r.height - 0.5) * 16); });
+    s.addEventListener("pointerleave", () => { qx(0); qy(0); });
+  });
+
+  /* mock 1: tool tabs rewrite the "code" and spin the preview */
+  $$(".mk-tabs").forEach((tb) => {
+    const m = tb.closest(".mk"), tabs = $$("span", tb), us = $$(".mk-code u", m), b = $(".mk-prev b", m);
+    const set = (i) => {
+      tabs.forEach((t, j) => t.classList.toggle("on", i === j));
+      us.forEach((u) => gsap.to(u, { width: 25 + Math.random() * 70 + "%", duration: 0.5, ease: "power3.out" }));
+      gsap.fromTo(b, { rotation: 0, scale: 0.5 }, { rotation: 90 * (i + 1), scale: 1, borderRadius: i % 2 ? "50%" : "0%", duration: 0.7, ease: "back.out(2)" });
+    };
+    tabs.forEach((t, i) => t.addEventListener("pointerenter", () => set(i)));
+    set(0);
+  });
+
+  /* mock 2: DOM-inspector selection follows the hovered element */
+  $$(".mk-page").forEach((p) => {
+    const sel = $(".mk-sel", p), lb = $("em", sel);
+    $$(".el", p).forEach((el) => el.addEventListener("pointerenter", () => {
+      lb.textContent = el.dataset.n;
+      gsap.to(sel, { left: el.offsetLeft - 4, top: el.offsetTop - 4, width: el.offsetWidth + 8, height: el.offsetHeight + 8, opacity: 1, duration: 0.35, ease: "power3.out" });
+    }));
+    p.addEventListener("pointerleave", () => gsap.to(sel, { opacity: 0, duration: 0.2 }));
+  });
+
+  /* mock 3: balance counts up */
+  const bal = $(".bal");
+  if (bal) { const o = { v: 0 }; ScrollTrigger.create({ trigger: bal, start: "top 90%", once: true, onEnter: () => gsap.to(o, { v: 2480.5, duration: 2, ease: "power3.out", onUpdate: () => (bal.textContent = o.v.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })) }) }); }
+
+  /* mock 4: stops <-> map pins, auto-cycles while idle */
+  $$(".trip-body").forEach((b) => {
+    const li = $$(".stops li", b), pins = $$(".pin", b);
+    const on = (i) => { li.forEach((l, j) => l.classList.toggle("on", i === j)); pins.forEach((p, j) => p.classList.toggle("on", i === j)); };
+    li.forEach((l, i) => l.addEventListener("pointerenter", () => on(i)));
+    let k = 0; on(0);
+    setInterval(() => { if (!b.matches(":hover")) { k = (k + 1) % li.length; on(k); } }, 1800);
+  });
+
+  /* principles accordion */
+  const pn = $$(".pn-panel");
+  pn.forEach((p) => {
+    const go = () => pn.forEach((q) => q.classList.toggle("on", q === p));
+    p.addEventListener("click", go);
+    if (fine) p.addEventListener("pointerenter", go);
+  });
+
+  /* lab: flexbox playground with FLIP */
+  const fx = $(".fx"), bx = $$("i", fx), code = $("#fxCode");
+  const st = { "flex-direction": "row", "justify-content": "flex-start", "align-items": "flex-start" };
+  $$(".fx-btn[data-p]").forEach((b) => b.addEventListener("click", () => {
+    const f = bx.map((x) => x.getBoundingClientRect());
+    $$(`.fx-btn[data-p="${b.dataset.p}"]`).forEach((x) => x.classList.toggle("on", x === b));
+    st[b.dataset.p] = b.dataset.v;
+    Object.assign(fx.style, { flexDirection: st["flex-direction"], justifyContent: st["justify-content"], alignItems: st["align-items"] });
+    bx.forEach((x, i) => { const n = x.getBoundingClientRect(); gsap.from(x, { x: f[i].left - n.left, y: f[i].top - n.top, duration: 0.7, ease: "elastic.out(1,.6)" }); });
+    code.textContent = Object.entries(st).map(([k, v]) => k + ": " + v + ";").join("\n");
+  }));
+
+  /* lab: WCAG contrast checker */
+  const lum = (h) => { const c = [1, 3, 5].map((i) => parseInt(h.substr(i, 2), 16) / 255).map((v) => (v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4)); return 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2]; };
+  function cr() {
+    const f = $("#crF").value, b = $("#crB").value, a = lum(f), c = lum(b), r = (Math.max(a, c) + 0.05) / (Math.min(a, c) + 0.05);
+    $("#crR").textContent = r.toFixed(2) + ":1";
+    const d = $("#crDemo"); d.style.color = f; d.style.background = b;
+    $("#crBadges").innerHTML = [["AA text", 4.5], ["AAA text", 7], ["AA large", 3]].map(([n, m]) => `<span class="cr-badge${r >= m ? " ok" : ""}">${r >= m ? "✓" : "✕"} ${n}</span>`).join("");
+  }
+  $("#crF").addEventListener("input", cr); $("#crB").addEventListener("input", cr); cr();
+
+  /* ===================== 3D LABS ===================== */
+  function gl(cv, fov, z) {
+    const r = new THREE.WebGLRenderer({ canvas: cv, antialias: true, alpha: true });
+    r.setPixelRatio(Math.min(devicePixelRatio, 1.5));
+    const sc = new THREE.Scene(), cam = new THREE.PerspectiveCamera(fov, 1, 0.1, 100); cam.position.z = z;
+    const rs = () => { const w = cv.clientWidth, h = cv.clientHeight; if (!w || !h) return; r.setSize(w, h, false); cam.aspect = w / h; cam.updateProjectionMatrix(); };
+    new ResizeObserver(rs).observe(cv); rs();
+    const o = { r, sc, cam, vis: false };
+    new IntersectionObserver(([e]) => (o.vis = e.isIntersecting)).observe(cv);
+    return o;
+  }
+  function spin(cv) {
+    const s = { x: 0, y: 0, vx: 0, vy: 0.004, d: false, moved: 0 }; let lx, ly;
+    cv.addEventListener("pointerdown", (e) => { s.d = true; s.moved = 0; lx = e.clientX; ly = e.clientY; });
+    const up = () => (s.d = false);
+    addEventListener("pointerup", up); addEventListener("pointercancel", up);
+    cv.addEventListener("pointermove", (e) => { if (!s.d) return; const dx = e.clientX - lx, dy = e.clientY - ly; lx = e.clientX; ly = e.clientY; s.moved += Math.abs(dx) + Math.abs(dy); s.vy = dx * 0.008; s.vx = dy * 0.008; });
+    s.step = () => { if (!s.d) { s.vx *= 0.94; s.vy += (0.004 - s.vy) * 0.03; } s.x += s.vx; s.y += s.vy; s.x = Math.max(-1, Math.min(1, s.x)); };
+    return s;
+  }
+  const R = Math.random;
+
+  /* 01 · particle morph */
+  const mpCv = $("#mpCv");
+  if (mpCv) try {
+    const N = 3200, S = gl(mpCv, 45, 8), sp = spin(mpCv);
+    const pos = new Float32Array(N * 3), vel = new Float32Array(N * 3), tgt = new Float32Array(N * 3);
+    const sd = Float32Array.from({ length: N }, () => 0.035 + R() * 0.05);
+    for (let i = 0; i < N * 3; i++) pos[i] = (R() - 0.5) * 12;
+    const geo = new THREE.BufferGeometry(); geo.setAttribute("position", new THREE.BufferAttribute(pos, 3));
+    const pts = new THREE.Points(geo, new THREE.PointsMaterial({ color: 0xccff00, size: 0.05 }));
+    S.sc.add(pts);
+    const shapes = {
+      sphere: (i, o) => { const y = 1 - (i / (N - 1)) * 2, r = Math.sqrt(1 - y * y), a = i * 2.39996; o[0] = Math.cos(a) * r * 2.2; o[1] = y * 2.2; o[2] = Math.sin(a) * r * 2.2; },
+      cube: (i, o) => { const ax = i % 3, s = (i % 2) * 2 - 1; for (let k = 0; k < 3; k++) o[k] = (R() * 2 - 1) * 1.8; o[ax] = s * 1.8; },
+      torus: (i, o) => { const u = R() * 6.2832, v = R() * 6.2832; o[0] = (2 + 0.8 * Math.cos(v)) * Math.cos(u); o[1] = 0.8 * Math.sin(v); o[2] = (2 + 0.8 * Math.cos(v)) * Math.sin(u); },
+      helix: (i, o) => { const y = (i / N - 0.5) * 6, a = y * 2.4 + (i % 2) * Math.PI; o[0] = Math.cos(a) * 1.3 + (R() - 0.5) * 0.15; o[1] = y; o[2] = Math.sin(a) * 1.3 + (R() - 0.5) * 0.15; },
+    };
+    function textShape() {
+      const c = document.createElement("canvas"); c.width = 320; c.height = 160;
+      const g = c.getContext("2d"); g.fillStyle = "#fff"; g.font = "800 150px Syne, sans-serif"; g.textAlign = "center"; g.textBaseline = "middle"; g.fillText("DA", 160, 86);
+      const d = g.getImageData(0, 0, 320, 160).data, p = [];
+      for (let y = 0; y < 160; y += 2) for (let x = 0; x < 320; x += 2) if (d[(y * 320 + x) * 4 + 3] > 128) p.push([x, y]);
+      return (i, o) => { const q = p[i % p.length]; o[0] = (q[0] - 160) / 50; o[1] = (80 - q[1]) / 50; o[2] = (R() - 0.5) * 0.8; };
+    }
+    function setShape(name) {
+      const f = name === "da" ? textShape() : shapes[name], o = [0, 0, 0];
+      for (let i = 0; i < N; i++) { f(i, o); tgt[i * 3] = o[0]; tgt[i * 3 + 1] = o[1]; tgt[i * 3 + 2] = o[2]; }
+      $$("[data-sh]").forEach((b) => b.classList.toggle("on", b.dataset.sh === name));
+    }
+    $$("[data-sh]").forEach((b) => b.addEventListener("click", () => setShape(b.dataset.sh)));
+    setShape("sphere");
+    mpCv.addEventListener("click", () => { if (sp.moved < 6) for (let i = 0; i < N * 3; i++) vel[i] = (R() - 0.5) * 0.8; });
+    gsap.ticker.add(() => {
+      if (!S.vis) return;
+      sp.step(); pts.rotation.y = sp.y; pts.rotation.x = sp.x;
+      for (let i = 0; i < N * 3; i++) { vel[i] *= 0.92; pos[i] += (tgt[i] - pos[i]) * sd[(i / 3) | 0] + vel[i]; }
+      geo.attributes.position.needsUpdate = true;
+      S.r.render(S.sc, S.cam);
+    });
+  } catch (e) { mpCv.closest(".lab-tile").style.display = "none"; }
+
+  /* 02 · stack globe */
+  const glCv = $("#glCv");
+  if (glCv) try {
+    const S = gl(glCv, 40, 8.5), sp = spin(glCv), grp = new THREE.Group(); S.sc.add(grp);
+    const words = ["HTML5", "CSS3", "SCSS", "JavaScript", "TypeScript", "React", "Angular", "Redux", "MUI", "AntD", "Bootstrap", "Pug", "NestJS", "Java", "MySQL", "Supabase", "WordPress", "Git", "Docker", "Jira", "Figma", "Postman", "Swagger", "Chrome API"];
+    const sprites = [], ray = new THREE.Raycaster(), m = new THREE.Vector2(9, 9), v = new THREE.Vector3();
+    const draw = (c, t) => { const g = c.getContext("2d"); g.clearRect(0, 0, 256, 64); g.font = '600 34px "JetBrains Mono",monospace'; g.fillStyle = "#fff"; g.textAlign = "center"; g.textBaseline = "middle"; g.fillText(t, 128, 34); };
+    words.forEach((w, i) => {
+      const c = document.createElement("canvas"); c.width = 256; c.height = 64; draw(c, w);
+      const tex = new THREE.CanvasTexture(c); tex.colorSpace = THREE.SRGBColorSpace;
+      const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, transparent: true, depthWrite: false }));
+      const y = 1 - (i / (words.length - 1)) * 2, r = Math.sqrt(1 - y * y), a = i * 2.39996;
+      s.position.set(Math.cos(a) * r, y, Math.sin(a) * r).multiplyScalar(3);
+      s.userData = { c, w, tex }; grp.add(s); sprites.push(s);
+    });
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => sprites.forEach((s) => { draw(s.userData.c, s.userData.w); s.userData.tex.needsUpdate = true; }));
+    grp.add(new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.IcosahedronGeometry(2.6, 1)), new THREE.LineBasicMaterial({ color: 0xccff00, transparent: true, opacity: 0.25 })));
+    glCv.addEventListener("pointermove", (e) => { const r = glCv.getBoundingClientRect(); m.set(((e.clientX - r.left) / r.width) * 2 - 1, -(((e.clientY - r.top) / r.height) * 2 - 1)); });
+    glCv.addEventListener("pointerleave", () => m.set(9, 9));
+    gsap.ticker.add(() => {
+      if (!S.vis) return;
+      sp.step(); grp.rotation.y = sp.y; grp.rotation.x = sp.x; grp.updateMatrixWorld(true);
+      ray.setFromCamera(m, S.cam);
+      const hit = ray.intersectObjects(sprites)[0];
+      sprites.forEach((s) => {
+        s.getWorldPosition(v);
+        const k = (v.z + 3) / 6, h = hit && hit.object === s, f = (h ? 1.4 : 1) * (0.8 + 0.4 * k);
+        s.material.opacity = h ? 1 : 0.2 + 0.8 * k; s.material.color.set(h ? 0xccff00 : 0xffffff); s.scale.set(1.6 * f, 0.4 * f, 1);
+      });
+      S.r.render(S.sc, S.cam);
+    });
+  } catch (e) { glCv.closest(".lab-tile").style.display = "none"; }
+
+  /* 03 · navigation cube (CSS 3D) — uses the page's existing "goto" event */
+  const cs = $(".cube-scene"), cube = $(".cube");
+  if (cs) {
+    let rx = -20, ry = 30, vx = 0, vy = 0.25, drag = false, lx = 0, ly = 0, moved = 0, vis = false;
+    new IntersectionObserver(([e]) => (vis = e.isIntersecting)).observe(cs);
+    cs.addEventListener("pointerdown", (e) => { drag = true; moved = 0; lx = e.clientX; ly = e.clientY; });
+    addEventListener("pointerup", () => (drag = false)); addEventListener("pointercancel", () => (drag = false));
+    cs.addEventListener("pointermove", (e) => { if (!drag) return; const dx = e.clientX - lx, dy = e.clientY - ly; lx = e.clientX; ly = e.clientY; moved += Math.abs(dx) + Math.abs(dy); vy = dx * 0.4; vx = -dy * 0.4; });
+    cs.addEventListener("click", (e) => {
+      if (moved > 6) return;
+      const f = document.elementFromPoint(e.clientX, e.clientY), face = f && f.closest("[data-go]");
+      if (face) dispatchEvent(new CustomEvent("goto", { detail: face.dataset.go === "0" ? 0 : face.dataset.go }));
+    });
+    gsap.ticker.add(() => {
+      if (!vis) return;
+      if (!drag) { vx *= 0.95; vy += (0.25 - vy) * 0.02; }
+      rx += vx; ry += vy; if (drag) { vx = 0; vy = 0; }
+      gsap.set(cube, { rotationX: rx, rotationY: ry });
+    });
+  }
+</script>
   </body>
 </html>
